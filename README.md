@@ -114,3 +114,14 @@ navigateTo(AR(TestNavigationRoute.settings))
     }
 
 ```
+
+3. Finally, use `AppNavigationView(content:)` to host your views and perform navigation.
+
+```swift
+    AppNavigationView {
+        ContentView()
+    }
+```
+
+`AppNavigationView` injects the `navigateTo(_)` into the environment of the ContentView to be accessible in child views.
+If you want to add navigation title to your view, the modifier should either be applied to the `ContentView` or  a sub view in `ContentView`.
