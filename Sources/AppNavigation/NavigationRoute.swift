@@ -14,9 +14,6 @@ public protocol NavigationRoute: Hashable {
     
     var id: String { get }
     
-    /// This should match the name of the route collection this route will be registered in.
-    var domain: String { get }
-    
     func destination(from:Namespace.ID)-> Destination
     
 }
@@ -38,14 +35,11 @@ public struct AnyNavigationRoute: NavigationRoute {
     
     private let _destination: (Namespace.ID) -> any View
     
-    private let _domain: String?
-    
     public init<D: NavigationRoute>(_ route: D, domain: String) {
         self._id = route.id
         self._hashValue = route.hashValue
         self._underlying = route
         self._destination = { route.destination(from:$0) }
-        self._domain = domain
         
     }
     
@@ -54,13 +48,12 @@ public struct AnyNavigationRoute: NavigationRoute {
         self._hashValue = route.hashValue
         self._underlying = route
         self._destination = { route.destination(from:$0) }
-        self._domain = route.domain
         
     }
     
     private func _isEqual(_ other: AnyNavigationRoute) -> Bool {
         guard let otherRoute = other._underlying as? any NavigationRoute else { return false }
-        return self.id == otherRoute.id && self.domain == other.domain
+        return self.id == otherRoute.id
     }
     
     public var id: String { _id }
@@ -76,7 +69,5 @@ public struct AnyNavigationRoute: NavigationRoute {
     public func destination(from:Namespace.ID) -> some View {
         AnyView(_destination(from))
     }
-    
-    public var domain:String { _domain ?? "" }
     
 }

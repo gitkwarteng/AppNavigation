@@ -40,7 +40,7 @@ public final class RouteCollection<RouteType: NavigationRoute, Destination: View
     }
 
     public func add<D: NavigationRoute>(_ route: D) -> Self {
-        let key = getKey(route.id, forDomain: route.domain)
+        let key = getKey(route.id, forDomain: self.name)
         routes[key.Key] = AnyNavigationRoute(route)
         return self
     }
@@ -60,7 +60,7 @@ public final class RouteCollection<RouteType: NavigationRoute, Destination: View
     
 
     func destination(for route: some NavigationRoute, from:Namespace.ID) -> Destination? {
-        let key = getKey(route.id, forDomain: route.domain)
+        let key = getKey(route.id, forDomain: self.name)
         guard let registeredRoute = self.routes[key.Key] else {
             return nil
         }
@@ -139,8 +139,9 @@ public final class NavigationRouter {
     }
     
     public func destination(for route: AnyNavigationRoute, from: Namespace.ID) -> AnyView? {
-        guard let router = routers[route.domain] else { return nil }
-        return router.destination(for: route, from: from)
+//        guard let router = routers[route.domain] else { return nil }
+//        return router.destination(for: route, from: from)
+        return AnyView(route.destination(from: from))
     }
 }
 
