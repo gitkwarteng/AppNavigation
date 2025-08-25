@@ -11,7 +11,7 @@ import Combine
 import SwiftUI
 import Combine
 
-protocol NavigationViewModelProtocol {
+public protocol NavigationViewModelProtocol {
     var path: NavigationPath { get set }
     
     init()
@@ -85,13 +85,13 @@ protocol ObservableObjectNavigationViewModelProtocol: NavigationViewModelProtoco
 @available(iOS 17.0, macOS 14.0, *)
 @Observable
 public class ModernNavigationViewModel: ObservableNavigationViewModelProtocol {
-    var path: NavigationPath = NavigationPath()
+    public var path: NavigationPath = NavigationPath()
     
-    required init() {
+    required public init() {
         self.path = NavigationPath()
     }
     
-    func restoreSession() {
+    public func restoreSession() {
         if let data = Self.readSerializedData() {
             do {
                 let representation = try JSONDecoder().decode(
@@ -115,7 +115,7 @@ public class ModernNavigationViewModel: ObservableNavigationViewModelProtocol {
         // Write data representing the path to app's persistent storage.
     }
     
-    func saveSession() {
+    public func saveSession() {
         guard let representation = path.codable else { return }
         do {
             let encoder = JSONEncoder()
@@ -126,11 +126,11 @@ public class ModernNavigationViewModel: ObservableNavigationViewModelProtocol {
         }
     }
     
-    func navigateTo(_ route: AnyNavigationRoute) {
+    public func navigateTo(_ route: AnyNavigationRoute) {
         self.path.append(route)
     }
     
-    func goBack() {
+    public func goBack() {
         if path.isEmpty { return }
         self.path.removeLast(1)
     }
@@ -138,13 +138,13 @@ public class ModernNavigationViewModel: ObservableNavigationViewModelProtocol {
 
 // For iOS 13+ using ObservableObject
 public class LegacyNavigationViewModel: ObservableObjectNavigationViewModelProtocol {
-    @Published var path: NavigationPath = NavigationPath()
+    @Published public var path: NavigationPath = NavigationPath()
     
-    required init() {
+    required public init() {
         self.path = NavigationPath()
     }
     
-    func restoreSession() {
+    public func restoreSession() {
         if let data = Self.readSerializedData() {
             do {
                 let representation = try JSONDecoder().decode(
@@ -168,7 +168,7 @@ public class LegacyNavigationViewModel: ObservableObjectNavigationViewModelProto
         // Write data representing the path to app's persistent storage.
     }
     
-    func saveSession() {
+    public func saveSession() {
         guard let representation = path.codable else { return }
         do {
             let encoder = JSONEncoder()
@@ -180,12 +180,12 @@ public class LegacyNavigationViewModel: ObservableObjectNavigationViewModelProto
     }
     
     @MainActor
-    func navigateTo(_ route: AnyNavigationRoute) {
+    public func navigateTo(_ route: AnyNavigationRoute) {
         self.path.append(route)
     }
     
     @MainActor
-    func goBack() {
+    public func goBack() {
         if path.isEmpty { return }
         self.path.removeLast(1)
     }
@@ -202,7 +202,7 @@ typealias NavigationViewModelLegacy = LegacyNavigationViewModel
 
 // MARK: - Factory Pattern (Optional)
 
-struct NavigationViewModelFactory {
+public struct NavigationViewModelFactory {
     static func create() -> any NavigationViewModelProtocol {
         if #available(iOS 17.0, macOS 14.0, *) {
             return ModernNavigationViewModel()

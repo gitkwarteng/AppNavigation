@@ -17,7 +17,7 @@ public protocol ViewConfig: Hashable {
 }
 
 
-extension ViewConfig {
+public extension ViewConfig {
     
     // Generic method to update property using key path
     mutating func update<T>(property: WritableKeyPath<Self, T>, to value: T) {
@@ -25,7 +25,7 @@ extension ViewConfig {
     }
 }
 
-extension ViewConfig {
+public extension ViewConfig {
     
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)

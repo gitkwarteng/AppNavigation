@@ -13,7 +13,7 @@ struct NavigationFunctionEnvironmentKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-    var navigateTo: (AnyNavigationRoute) -> Void {
+    public var navigateTo: (AnyNavigationRoute) -> Void {
         get { self[NavigationFunctionEnvironmentKey.self] }
         set { self[NavigationFunctionEnvironmentKey.self] = newValue }
     }
@@ -25,8 +25,20 @@ struct GoBackEnvironmentKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-    var goBack: () -> Void {
+    public var goBack: () -> Void {
         get { self[GoBackEnvironmentKey.self] }
         set { self[GoBackEnvironmentKey.self] = newValue }
+    }
+}
+
+
+struct RouterEnvironmentKey: EnvironmentKey {
+    nonisolated(unsafe) static let defaultValue: NavigationRouter? = nil
+}
+
+extension EnvironmentValues {
+    public var router: NavigationRouter? {
+        get { self[RouterEnvironmentKey.self] }
+        set { self[RouterEnvironmentKey.self] = newValue }
     }
 }
