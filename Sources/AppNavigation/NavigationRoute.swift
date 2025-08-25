@@ -19,7 +19,6 @@ public protocol NavigationRoute: Hashable {
     
     func destination(from:Namespace.ID)-> Destination
     
-    var data: Hashable? { get }
 }
 
 public extension NavigationRoute {
@@ -41,15 +40,12 @@ public struct AnyNavigationRoute: NavigationRoute {
     
     private let _domain: String?
     
-    private let _data:Hashable?
-    
     public init<D: NavigationRoute>(_ route: D, domain: String) {
         self._id = route.id
         self._hashValue = route.hashValue
         self._underlying = route
         self._destination = { route.destination(from:$0) }
         self._domain = domain
-        self._data = route.data
         
     }
     
@@ -59,7 +55,6 @@ public struct AnyNavigationRoute: NavigationRoute {
         self._underlying = route
         self._destination = { route.destination(from:$0) }
         self._domain = route.domain
-        self._data = route.data
         
     }
     
@@ -83,7 +78,5 @@ public struct AnyNavigationRoute: NavigationRoute {
     }
     
     public var domain:String { _domain ?? "" }
-    
-    public var data: Hashable? { _data }
     
 }

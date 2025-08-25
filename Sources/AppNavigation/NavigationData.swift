@@ -8,117 +8,91 @@
 import SwiftUI
 
 
-import SwiftUI
 
-
-
-public protocol NavigationRouteDataProtocol {
+public protocol NavigationDataValueProtocol {
     
     associatedtype Value
+
+    var value: Value { get }
+}
+
+
+public protocol NavigationDataWithConfigProtocol {
     
     associatedtype Config
 
-    var value: Value? { get }
-
-    var config: Binding<Config>? { get }
-
-    var namespace: Namespace.ID? { get }
+    var config: Binding<Config> { get }
 }
 
 
+public protocol NavigationDataWithNamespaceProtocol {
+
+    var namespace: Namespace.ID { get }
+}
 
 
-public struct NavigationData<Value: Hashable, Config: ViewConfig>: NavigationRouteDataProtocol {
+public struct NavigationDataValue<Value: Hashable>: NavigationDataValueProtocol {
+    public let value: Value
     
-    public init(
-        value: Value?,
-        namespace: Namespace.ID? = nil,
-        config: Binding<Config>? = nil
-    ) {
+    public init(value: Value) {
         self.value = value
-        self.namespace = namespace
+    }
+}
+
+
+public struct NavigationDataWithConfig<Value: Hashable, Config>: NavigationDataValueProtocol, NavigationDataWithConfigProtocol {
+    public let value: Value
+    public let config: Binding<Config>
+    
+    public init(value: Value, config: Binding<Config>) {
+        self.value = value
         self.config = config
     }
-    
-    public static func == (lhs: NavigationData<Value, Config>, rhs: NavigationData<Value, Config>) -> Bool {
-        lhs.value == rhs.value && lhs.namespace == rhs.namespace
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(value)
-        hasher.combine(namespace)
-    }
-    
-    public let value: Value?
-    public var namespace: Namespace.ID?
-    public var config: Binding<Config>?
 }
 
 
+public struct NavigationDataWithNamespace<Value: Hashable>: NavigationDataValueProtocol, NavigationDataWithNamespaceProtocol {
+    public let value: Value
+    public let namespace: Namespace.ID
+    
+    public init(value: Value, namespace: Namespace.ID) {
+        self.value = value
+        self.namespace = namespace
+    }
+}
 
-// Type-erased wrapper
-public struct AnyNavigationData: Hashable {
-    public let value: AnyHashable?
-    public var namespace: Namespace.ID?
-    public var config: Any?  // Type-erased config binding
+public struct NavigationData<Value: Hashable, Config: ViewConfig>: NavigationDataValueProtocol, NavigationDataWithConfigProtocol, NavigationDataWithNamespaceProtocol {
+    public let value: Value
+    public let config: Binding<Config>
+    public let namespace: Namespace.ID
     
-    private let _hashInto: (inout Hasher) -> Void
-//    private let _equals: (Any) -> Bool
-    
-    public init<Value: Hashable, Config: ViewConfig>(_ data: NavigationData<Value, Config>) {
-        self.value = data.value.map(AnyHashable.init)
-        self.namespace = data.namespace
-        self.config = data.config
-        
-        // Store hash implementation
-        self._hashInto = { hasher in
-            hasher.combine(data.value)
-            hasher.combine(data.namespace)
-        }
-        
-        // Store equality implementation
-//        self._equals = { other in
-//            guard let otherData = other as? AnyNavigationData else { return false }
-//            return value == otherData.value && namespace == otherData.namespace
-//        }
-    }
-    
-    private func _equal(other: AnyNavigationData) -> Bool {
-        guard let otherData = other as? AnyNavigationData else { return false }
-        return value == otherData.value && namespace == otherData.namespace
-    }
-    
-    // Convenience initializer for creating from values directly
-    public init<Value: Hashable, Config: ViewConfig>(
-        value: Value?,
-        namespace: Namespace.ID? = nil,
-        config: Binding<Config>? = nil
+    public init(
+        _ value: Value,
+        config: Binding<Config>,
+        namespace: Namespace.ID
     ) {
-        let data = NavigationData<Value, Config>(
-            value: value,
-            namespace: namespace,
-            config: config
-        )
-        self.init(data)
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        _hashInto(&hasher)
-    }
-    
-    public static func == (lhs: AnyNavigationData, rhs: AnyNavigationData) -> Bool {
-        lhs.value == rhs.value && lhs.namespace == rhs.namespace
-    }
-    
-    // Helper method to extract typed data (optional)
-    public func extract<Value: Hashable, Config: ViewConfig>() -> NavigationData<Value, Config>? {
-        guard let value = value?.base as? Value else { return nil }
-        return NavigationData<Value, Config>(
-            value: value,
-            namespace: namespace,
-            config: config as? Binding<Config>
-        )
+        self.value = value
+        self.config = config
+        self.namespace = namespace
     }
 }
 
 
+extension NavigationData {
+    
+    public static func value(_ value: Value) -> NavigationDataValue<Value> {
+        .init(value: value)
+    }
+    
+    public static func config(
+        _ value: Value,
+        config: Binding<Config>
+    ) -> NavigationDataWithConfig<Value, Config> {
+        .init(value: value, config: config)
+    }
+    
+    public static func namespace(_ value: Value, namespace: Namespace.ID) -> NavigationDataWithNamespace<Value> {
+        .init(value: value, namespace: namespace)
+    }
+
+}
