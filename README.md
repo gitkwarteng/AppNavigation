@@ -1,4 +1,5 @@
 #  App Navigation
+This is a simple package to help perform programatic navigation in your app.
 
 ## Basic Implementation 
 
@@ -35,7 +36,7 @@ enum TestNavigationRoute: NavigationRoute {
 ## Complex routes with data
 
 For routes with data you can use any data of choice. 
-But if are like me who sometimes need to pass binding to some state properties 
+But if you are like me who sometimes need to pass binding to some state properties 
 from the calling site and also perform some matchedGeometry animations, there's
 a helper struct to help bundle all together.
 
@@ -125,3 +126,5 @@ navigateTo(AR(TestNavigationRoute.settings))
 
 `AppNavigationView` injects the `navigateTo(_)` into the environment of the ContentView to be accessible in child views.
 If you want to add navigation title to your view, the modifier should either be applied to the `ContentView` or  a sub view in `ContentView`.
+
+You can also use the `goBack` enviroment variable to pop a view off the navigation stack. 
