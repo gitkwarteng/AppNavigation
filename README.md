@@ -5,7 +5,7 @@ This is a simple package to help perform programatic navigation in your app.
 
 Defining your routes with destination
 
-All cases in destination must return the same type, so wrap your views with `AnyView`
+Wrap your destination function with `@ViewBuilder` to be able to return any view.
 
 ```swift
 
@@ -24,10 +24,10 @@ enum TestNavigationRoute: NavigationRoute {
         }
     }
     
-    var destination: some View {
+    @ViewBuilder func destination(from:Namespace.ID) -> some View {
         switch self {
-        case .settings: return AnyView(Text("Settings destination"))
-        case .profile: return AnyView(Text("Profile destination"))
+        case .settings: return Text("Settings destination")
+        case .profile: return Text("Profile destination")
         }
     }
 }
@@ -71,11 +71,11 @@ enum TestNavigationRoute: NavigationRoute {
         }
     }
     
-    var destination: some View {
+    @ViewBuilder func destination(from:Namespace.ID) -> some View {
         switch self {
         ...
-        case .detailProfile(let profile): return AnyView(ProfileDetailView(profile:profile))
-        case .editProfile(let data): return AnyView(EditProfileView(profile:data.value, config:data.config, namespace:data.namespace))
+        case .detailProfile(let profile): return ProfileDetailView(profile:profile)
+        case .editProfile(let data): return EditProfileView(profile:data.value, config:data.config, namespace:data.namespace)
         }
     }
 }
@@ -127,4 +127,4 @@ navigateTo(AR(TestNavigationRoute.settings))
 `AppNavigationView` injects the `navigateTo(_)` into the environment of the ContentView to be accessible in child views.
 If you want to add navigation title to your view, the modifier should either be applied to the `ContentView` or  a sub view in `ContentView`.
 
-You can also use the `goBack` enviroment variable to pop a view off the navigation stack. 
+You can also use the `goBack` environment variable to pop a view off the navigation stack. 
