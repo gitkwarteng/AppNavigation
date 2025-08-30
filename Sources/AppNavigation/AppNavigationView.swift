@@ -29,19 +29,11 @@ public struct AppNavigationView<Content: View>: View {
             
             content
                 .navigationDestination(for: AnyNavigationRoute.self) { route in
-                    Group {
-                        
-                        route.destination(from: animation)
-                        
-//                        if let router, let destination = router.destination(for: route, from: animation){
-//                            destination
-//                        } else {
-//                            EmptyView()
-//                        }
-                    }
-                    .environment(\.navigateTo, viewModel.navigateTo)
-                    .environment(\.goBack, viewModel.goBack)
-                    .environment(\.router, router)
+                    
+                    route.destination(from: animation)
+                        .environment(\.navigateTo, viewModel.navigateTo)
+                        .environment(\.goBack, viewModel.goBack)
+                        .environment(\.router, router)
                     
                 }
                 .environment(\.navigateTo, viewModel.navigateTo)

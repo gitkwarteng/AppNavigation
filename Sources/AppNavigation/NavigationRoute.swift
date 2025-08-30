@@ -14,7 +14,7 @@ public protocol NavigationRoute: Hashable {
     
     var id: String { get }
     
-    func destination(from:Namespace.ID)-> Destination
+    @ViewBuilder func destination(from:Namespace.ID)-> Destination
     
 }
 
